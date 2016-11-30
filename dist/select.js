@@ -1,7 +1,7 @@
 /*!
  * ui-select
  * http://github.com/angular-ui/ui-select
- * Version: 0.13.2 - 2015-12-10T03:49:47.838Z
+ * Version: 0.13.2 - 2016-11-30T16:25:37.636Z
  * License: MIT
  */
 
@@ -1093,6 +1093,9 @@ uis.directive('uiSelect',
             // Delay positioning the dropdown until all choices have been added so its height is correct.
             $timeout(function(){
 
+              var offset = uisOffset(element);
+              var offsetDropdown = uisOffset(dropdown);
+
               if ($select.dropdownPosition === 'up'){
                   //Go UP
                   setDropdownPosUp(offset, offsetDropdown);
@@ -1100,9 +1103,6 @@ uis.directive('uiSelect',
               }else{ //AUTO
 
                 element.removeClass(directionUpClassName);
-
-                var offset = uisOffset(element);
-                var offsetDropdown = uisOffset(dropdown);
 
                 //https://code.google.com/p/chromium/issues/detail?id=342307#c4
                 var scrollTop = $document[0].documentElement.scrollTop || $document[0].body.scrollTop; //To make it cross browser (blink, webkit, IE, Firefox).
@@ -1181,7 +1181,7 @@ uis.directive('uiSelectMultiple', ['uiSelectMinErr','$timeout', function(uiSelec
           $select = $scope.$select,
           ngModel;
 
-      //Wait for link fn to inject it 
+      //Wait for link fn to inject it
       $scope.$evalAsync(function(){ ngModel = $scope.ngModel; });
 
       ctrl.activeMatchIndex = -1;
@@ -1193,7 +1193,7 @@ uis.directive('uiSelectMultiple', ['uiSelectMinErr','$timeout', function(uiSelec
 
       ctrl.refreshComponent = function(){
         //Remove already selected items
-        //e.g. When user clicks on a selection, the selected array changes and 
+        //e.g. When user clicks on a selection, the selected array changes and
         //the dropdown should remove that item
         $select.refreshItems();
         $select.sizeSearchInput();
@@ -1292,7 +1292,7 @@ uis.directive('uiSelectMultiple', ['uiSelectMinErr','$timeout', function(uiSelec
         };
         if (!inputValue) return resultMultiple; //If ngModel was undefined
         for (var k = inputValue.length - 1; k >= 0; k--) {
-          //Check model array of currently selected items 
+          //Check model array of currently selected items
           if (!checkFnMultiple($select.selected, inputValue[k])){
             //Check model array of all items available
             if (!checkFnMultiple(data, inputValue[k])){
@@ -1303,8 +1303,8 @@ uis.directive('uiSelectMultiple', ['uiSelectMinErr','$timeout', function(uiSelec
         }
         return resultMultiple;
       });
-      
-      //Watch for external model changes 
+
+      //Watch for external model changes
       scope.$watchCollection(function(){ return ngModel.$modelValue; }, function(newValue, oldValue) {
         if (oldValue != newValue){
           ngModel.$modelValue = null; //Force scope model value and ngModel value to be out of sync to re-run formatters
@@ -1465,9 +1465,10 @@ uis.directive('uiSelectMultiple', ['uiSelectMinErr','$timeout', function(uiSelec
               stashArr = stashArr.slice(1,stashArr.length);
             }
             newItem = $select.tagging.fct($select.search);
-            newItem.isTag = true;
             // verify the the tag doesn't match the value of an existing item
             if ( stashArr.filter( function (origItem) { return angular.equals( origItem, $select.tagging.fct($select.search) ); } ).length > 0 ) {
+              stashArr = stashArr.slice(1,stashArr.length);
+              $select.items = items;
               return;
             }
             newItem.isTag = true;
